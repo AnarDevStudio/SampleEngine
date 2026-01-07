@@ -129,9 +129,6 @@ SampleEngine.run(scene, 60)
 - Node.js (version 14.x or higher)
 - PyUnity (latest version)
 
-## 📄 License
-
-[Add your license information here]
 
 ## 🤝 Contributing
 

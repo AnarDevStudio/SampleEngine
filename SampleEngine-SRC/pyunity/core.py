@@ -628,15 +628,6 @@ class Component(SavesProjectID, metaclass=ComponentType):
         return self.gameObject.GetComponents(componentClass)
 
     def RemoveComponents(self, componentClass):
-        """
-        Calls :meth:`GameObject.RemoveComponents` on the component's GameObject.
-
-        Parameters
-        ----------
-        componentClass : Component
-            Component to remove. Must inherit from :class:`Component`
-
-        """
         return self.gameObject.RemoveComponents(componentClass)
 
     @property
