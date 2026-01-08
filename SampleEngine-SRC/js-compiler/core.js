@@ -1,80 +1,53 @@
-/**
- * GameObject: A generic object in the game that can hold multiple components.
-*/
+import { Rigidbody } from "./physics.js";
+import { spawnSync } from "node:child_process";
 
-/**
- * @typedef {"SpriteRenderer" | "MeshRenderer"} ComponentType
- */
 
 export default class GameObject {
-    #id;
+    #id = crypto.randomUUID();
     components = [];
 
-    constructor(name) {
-        this.#id = crypto.randomUUID();
-
-        if (!name || name === "") {
-            name = "Object-" + crypto.randomUUID().slice(0, 8);
-        }
+    constructor(name = "Object") {
         this.name = name;
     }
 
     /**
-     * @param {ComponentType} type
+     * Unity-style component adding
+     * @param {Function} ComponentClass
      */
-
-    addComponent(type) {
-        let instance;
-
-        switch (type.toLowerCase()) {
-            case "SpriteRenderer":
-                // instance = new SpriteRenderer();
-                instance = "SpriteRenderer"
-                break;
-            case "MeshRenderer":
-                //instance = new MeshRenderer;
-                instance = "MeshRenderer"
-                break;
-            case "Camera":
-                //instance = Camera()
-                instance = "Camera"
-                break;
-            case "Light":
-                //instance = new Light()
-                instance = "Light"
-                break;
-            case "AudioSource":
-                //instance = new AudioSource()
-                instance = "Light"
-                break;
-            default:
-                console.error("There is not a component for:", type);
-                return;
-        }
-
+    addComponent(ComponentClass) {
+        const instance = new ComponentClass();
         this.components.push(instance);
+
+        // shortcut: man.Rigidbody
+        this[ComponentClass.name] = instance;
+
+        return instance;
     }
 
-    getComponent(type) {
-        const comp = this.components.find(c => c.constructor.name.toLowerCase() === type.toLowerCase());
-        console.log(comp);
-        return comp;
+    /**
+     * @param {Function} ComponentClass
+     */
+    getComponent(ComponentClass) {
+        return this.components.find(c => c instanceof ComponentClass);
     }
 
-    removeComponent(type) {
-        const index = this.components.findIndex(c => c.constructor.name.toLowerCase() === type.toLowerCase());
-        if (index !== -1) this.components.splice(index, 1);
+    /**
+     * @param {Function} ComponentClass
+     */
+    removeComponent(ComponentClass) {
+        this.components = this.components.filter(
+            c => !(c instanceof ComponentClass)
+        );
+        delete this[ComponentClass.name];
     }
 
     getName() {
-        console.log(this.name);
+        return this.name;
     }
 
     getId() {
-        console.log(this.#id); 
+        return this.#id;
     }
 }
-
-
 
 

@@ -626,6 +626,7 @@ class Component(SavesProjectID, metaclass=ComponentType):
 
         """
         return self.gameObject.GetComponents(componentClass)
+        print("Start")
 
     def RemoveComponents(self, componentClass):
         return self.gameObject.RemoveComponents(componentClass)
