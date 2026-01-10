@@ -59,6 +59,7 @@ from .errors import ComponentException, PyUnityException
 from .values import ABCMeta, IncludeInstanceMixin, Quaternion, Vector3
 import os
 import enum
+import sys
 
 class Tag:
     """
@@ -297,8 +298,8 @@ class GameObject(SavesProjectID):
             A list of all matching components
 
         """
-
-        return [cpnt for cpnt in self.components if isinstance(cpnt, componentClass)]
+        print("Selam")
+        # return [cpnt for cpnt in self.components if isinstance(cpnt, componentClass)]
 
     def RemoveComponents(self, componentClass):
         """
@@ -626,7 +627,6 @@ class Component(SavesProjectID, metaclass=ComponentType):
 
         """
         return self.gameObject.GetComponents(componentClass)
-        print("Start")
 
     def RemoveComponents(self, componentClass):
         return self.gameObject.RemoveComponents(componentClass)

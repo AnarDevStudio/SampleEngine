@@ -1,8 +1,11 @@
-import { Rigidbody } from "./physics.js";
-import { spawnSync } from "node:child_process";
+const { Rigidbody } = require('./physics.js');
+const { GetPY } = require('./getpy.js');
+const crypto = require('crypto');
 
 
-export default class GameObject {
+const COMPONENTS = { Rigidbody };
+
+class GameObject {
     #id = crypto.randomUUID();
     components = [];
 
@@ -12,32 +15,51 @@ export default class GameObject {
 
     /**
      * Unity-style component adding
-     * @param {Function} ComponentClass
+     * @param {Function|string} ComponentClass
      */
     addComponent(ComponentClass) {
+        // Eğer string verilmişse registry'den class referansını al
+        if (typeof ComponentClass === "string") {
+            const cls = COMPONENTS[ComponentClass];
+            if (!cls) throw new Error(`Component '${ComponentClass}' not found`);
+            ComponentClass = cls;
+        }
+
         const instance = new ComponentClass();
         this.components.push(instance);
 
-        // shortcut: man.Rigidbody
         this[ComponentClass.name] = instance;
+
+        GetPY("../pyunity/test.py", "add", [3,2], (err, res) => {
+            if (err) console.error("Python error:", err);
+            else console.log("Python result:", res);
+        });
 
         return instance;
     }
 
     /**
-     * @param {Function} ComponentClass
+     * @param {Function|string} ComponentClass
      */
     getComponent(ComponentClass) {
+        if (typeof ComponentClass === "string") {
+            ComponentClass = COMPONENTS[ComponentClass];
+            if (!ComponentClass) throw new Error(`Component '${ComponentClass}' not found`);
+        }
+
         return this.components.find(c => c instanceof ComponentClass);
     }
 
     /**
-     * @param {Function} ComponentClass
+     * @param {Function|string} ComponentClass
      */
     removeComponent(ComponentClass) {
-        this.components = this.components.filter(
-            c => !(c instanceof ComponentClass)
-        );
+        if (typeof ComponentClass === "string") {
+            ComponentClass = COMPONENTS[ComponentClass];
+            if (!ComponentClass) throw new Error(`Component '${ComponentClass}' not found`);
+        }
+
+        this.components = this.components.filter(c => !(c instanceof ComponentClass));
         delete this[ComponentClass.name];
     }
 
@@ -51,3 +73,5 @@ export default class GameObject {
 }
 
 
+const object = new GameObject();
+object.addComponent(Rigidbody); 
