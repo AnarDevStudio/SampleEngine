@@ -5,4 +5,10 @@ class Rigidbody {
     }
 }
 
+class BoxCollider {
+    constructor() {
+        console.log("BoxCollider component created");
+    }
+}
+
 module.exports = { Rigidbody };
